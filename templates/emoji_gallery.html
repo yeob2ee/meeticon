@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>meeticon · gallery</title>
+  <link rel="stylesheet" href="/static/portal.css">
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div class="brand">meeticon · gallery</div>
+      <div class="nav">
+        <a href="/emoji">새로 만들기</a>
+        <a href="/">홈</a>
+      </div>
+    </div>
+
+    {% if not items %}
+      <div class="card">
+        <p>아직 저장된 항목이 없어요. 새로만들기를 통해 하나 생성해보세요.</p>
+      </div>
+    {% else %}
+      <div class="grid">
+        {% for it in items %}
+          <div class="card item">
+            <div class="thumb">
+              {% if it.filename_png and it.filename_png != "pending.png" %}
+                <img src="/media/emoji/{{ it.filename_png }}" alt="thumb">
+              {% else %}
+                <span class="meta">(no image)</span>
+              {% endif %}
+            </div>
+
+            <div style="flex:1;">
+              <div class="meta">
+                id={{it.id}} · {{it.created_at}}
+              </div>
+
+              <div style="margin-top:6px; font-weight:700;">
+                {{ it.prompt }}
+              </div>
+
+              <div class="meta" style="margin-top:6px;">
+                size={{it.size}} · model={{it.model}}
+              </div>
+
+              <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+                {% if it.filename_png and it.filename_png != "pending.png" %}
+                  <a class="btn btn-ghost" href="/media/emoji/{{ it.filename_png }}" download>다운로드</a>
+                {% endif %}
+
+                <form action="/emoji/{{ it.id }}/delete" method="post" style="display:inline;">
+                  <button class="btn btn-danger" type="submit" onclick="return confirm('정말 삭제할까요?');">삭제</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>
